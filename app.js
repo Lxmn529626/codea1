@@ -25,28 +25,28 @@ const initializeDbAndServer = async () => {
 };
 initializeDbAndServer();
 const hasPriorityStatus= (requestQuery)=>{
-    return {
-        requestQuery.priority!==undefined && requestQuery.status!==undefined
-    };
+   
+        return (requestQuery.priority!==undefined && requestQuery.status!==undefined);
+    
 };
 const hasPriority=(requestQuery)=>{
-    return requestQuery.priority!==undefined
+     return requestQuery.priority!==undefined;
 };
 const hasStatus=(requestQuery)=>{
-    return requestQuery.status!==undefined
+    return requestQuery.status!==undefined;
 };
 const hasCategory=(requestQuery)=>{
-    return requestQuery.category!==undefined
+     return requestQuery.category!==undefined;
 };
 const hasCategoryStatus= (requestQuery)=>{
-    return {
-        requestQuery.category!==undefined && requestQuery.status!==undefined
-    };
+    
+        return (requestQuery.category!==undefined && requestQuery.status!==undefined);
+    
 };
 const hasCategoryPriority= (requestQuery)=>{
-    return {
-        requestQuery.category!==undefined && requestQuery.priority!==undefined
-    };
+    
+       return (requestQuery.category!==undefined && requestQuery.priority!==undefined);
+    
 };
 const hasSearch=(requestQuery)=>{
     return requestQuery.search_q!==undefined;
@@ -68,21 +68,9 @@ app.get("/todos/", async (request,response)=>{
     let getTodosQuery="";
     //using diff scenarios
     switch (true) {
-        //scene1
-        case hasPriority(request.query):
-            if (priority==="HIGH" || priority==="MEDIUM" || priority="Low") {
-                getTodosQuery=`select * from todo where priority='${priority}';`;
-                data= await db.all(getTodosQuery);
-                response.send(data.map((each)=>convertIntoResponsiveData(each)));
-
-            } else {
-                response.status(400);
-                response.send("Invalid Todo Priority")
-            }
-            break;
-        //scene2
+         //scene1
         case hasStatus(request.query):
-            if (status==="TO DO" || status==="IN PROGRESS" || status="DONE") {
+            if (status===("TO DO" || "IN PROGRESS" || "DONE")) {
                 getTodosQuery=`select * from todo where status='${status}';`;
                 data= await db.all(getTodosQuery);
                 response.send(data.map((each)=>convertIntoResponsiveData(each)));
@@ -92,12 +80,25 @@ app.get("/todos/", async (request,response)=>{
                 response.send("Invalid Todo Status")
             }
             break;
+        //scene2
+        case hasPriority(request.query):
+            if (priority===("HIGH" || "MEDIUM" || "LOW")) {
+                getTodosQuery=`select * from todo where priority='${priority}';`;
+                data= await db.all(getTodosQuery);
+                response.send(data.map((each)=>convertIntoResponsiveData(each)));
+
+            } else {
+                response.status(400);
+                response.send("Invalid Todo Priority")
+            }
+            break;
+       
         //scene 3
         case hasPriorityStatus(request.query):
-             if (priority==="HIGH" || priority==="MEDIUM" || priority="Low") {
-                 if (status==="TO DO" || status==="IN PROGRESS" || status="DONE") {
+             if (priority===("HIGH" || "MEDIUM" ||"LOW")) {
+                 if (status===("TO DO" || "IN PROGRESS" || "DONE")) {
                      getTodosQuery=`select * from todo where priority='${priority}' and status= '${status}';`;
-                     data await db.all(getTodosQuery)
+                     data= await db.all(getTodosQuery)
                      response.send(data.map((each)=>convertIntoResponsiveData(each)));
 
                 } else {
@@ -109,7 +110,7 @@ app.get("/todos/", async (request,response)=>{
                 response.status(400);
                 response.send("Invalid Todo Priority")
             }
-            break
+            break;
         //scene 4   
         case hasSearch(request.query):
            
@@ -119,10 +120,10 @@ app.get("/todos/", async (request,response)=>{
             break;
         //scene 5
          case hasCategoryStatus(request.query):
-             if (category==="WORK" ||category==="HOME" ||category==="LEARNING") {
-                 if (status==="TO DO" || status==="IN PROGRESS" || status="DONE") {
+             if (category===("WORK" ||"HOME" ||"LEARNING")) {
+                 if (status===("TO DO" || "IN PROGRESS" || "DONE")) {
                      getTodosQuery=`select * from todo where category='${category}' and status= '${status}';`;
-                     data await db.all(getTodosQuery)
+                     data= await db.all(getTodosQuery)
                      response.send(data.map((each)=>convertIntoResponsiveData(each)));
 
                 } else {
@@ -136,8 +137,8 @@ app.get("/todos/", async (request,response)=>{
             }
             break
         //scene 6
-        case hasStatus(request.query):
-            if (category==="WORK" ||category==="HOME" ||category==="LEARNING") {
+        case hasCategory(request.query):
+            if (category===("WORK" ||"HOME" ||"LEARNING")) {
                 getTodosQuery=`select * from todo where category='${category}';`;
                 data= await db.all(getTodosQuery);
                 response.send(data.map((each)=>convertIntoResponsiveData(each)));
@@ -149,10 +150,10 @@ app.get("/todos/", async (request,response)=>{
             break;
         //scene7
         case hasCategoryPriority(request.query):
-             if (category==="WORK" ||category==="HOME" ||category==="LEARNING") {
-                 if (priority==="HIGH" || priority==="MEDIUM" || priority="Low") {
+             if (category===("WORK" ||"HOME" ||"LEARNING")) {
+                 if (priority===("HIGH" || "MEDIUM" || "LOW")) {
                      getTodosQuery=`select * from todo where category='${category}' and priority= '${priority}';`;
-                     data await db.all(getTodosQuery)
+                     data= await db.all(getTodosQuery)
                      response.send(data.map((each)=>convertIntoResponsiveData(each)));
 
                 } else {
@@ -167,7 +168,7 @@ app.get("/todos/", async (request,response)=>{
             break
         default:
             getTodosQuery=`select * from todo;`;
-            data await db.all(getTodosQuery)
+            data= await db.all(getTodosQuery)
             response.send(data.map((each)=>convertIntoResponsiveData(each)));
            
     }
@@ -195,9 +196,9 @@ app.get("/agenda/", async(request,response)=>{
 //api4
 app.post("/todos/", async (request,response)=>{
     const {id,todo,priority,status,category,dueDate}=request.body;
-    if (priority==="HIGH" || priority==="MEDIUM" || priority="Low") {
-        if (status==="TO DO" || status==="IN PROGRESS" || status="DONE") {
-            if (category==="WORK" ||category==="HOME" ||category==="LEARNING") {
+   if (priority===("HIGH" || "MEDIUM" || "LOW")) {
+        if (status===("TO DO" || "IN PROGRESS" || "DONE")) {
+            if (category===("WORK" ||"HOME" ||"LEARNING")) {
                 if (isMatch(dueDate, "yyyy-MM-dd") ) {
                     const newDue=format(new Date(dueDate), "yyyy-MM-dd");
                     const postQuery=`insert into todo(id,todo,priority,status,category,due_date) values (${id},'${todo}','${priority}','${status}','${category}','${newDue}';`;
@@ -239,7 +240,7 @@ app.post("/todos/", async (request,response)=>{
     switch(true) {
         //set status
         case requestBody.status!==undefined:
-            if (status==="TO DO" || status==="IN PROGRESS" || status="DONE") {
+            if (status===("TO DO" || "IN PROGRESS" || "DONE")) {
                 updateTodo=`update todo set todo='${todo}',priority='${priority}',status='${status}',category='${category}',due_date='${dueDate}',where id=${todoId};`;
                 await db.run(updateTodo);
                 response.send("Status Updated");
@@ -250,7 +251,7 @@ app.post("/todos/", async (request,response)=>{
             break;
         //set priority
         case requestBody.priority!==undefined:
-            if (priority==="HIGH" || priority==="MEDIUM" || priority="Low") {
+            if (priority===("HIGH" || "MEDIUM" || "LOW")) {
                 updateTodo=`update todo set todo='${todo}',priority='${priority}',status='${status}',category='${category}',due_date='${dueDate}',where id=${todoId};`;
                 await db.run(updateTodo);
                 response.send("Priority Updated");
@@ -267,7 +268,7 @@ app.post("/todos/", async (request,response)=>{
             break;
         //update category 
          case requestBody.category!==undefined:
-            if (category==="WORK" ||category==="HOME" ||category==="LEARNING") {
+            if (category===("WORK" ||"HOME" ||"LEARNING")) {
                 updateTodo=`update todo set todo='${todo}',priority='${priority}',status='${status}',category='${category}',due_date='${dueDate}',where id=${todoId};`;
                 await db.run(updateTodo);
                 response.send("Category Updated");
@@ -301,7 +302,3 @@ app.delete("/todos/:todoId/", async(request,response)=>{
 
 });
 module.exports=app;
-
-
-
-
